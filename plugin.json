@@ -1,0 +1,71 @@
+{
+  "name": "Extended Math",
+  "keyword": "math",
+  "icon": "calculator",
+  "description": "Advanced calculator — trig, integrals, derivatives, plots, constants",
+  "version": "1.0.0",
+  "author": "Yoki",
+  "homepage": "https://yoki.run",
+  "license": "MIT",
+  "categories": ["productivity", "tools"],
+  "yoki_min": "1.0.4.0",
+
+  "protocol": "v2",
+
+  "permissions": {},
+
+  "commands": [
+    {
+      "name": "calc",
+      "title": "Calculate",
+      "description": "Evaluate a math expression",
+      "mode": "detail",
+      "exec": "calc.js",
+      "takes_query": true
+    },
+    {
+      "name": "trig",
+      "title": "Trigonometry",
+      "description": "Trig functions with degree/radian support",
+      "mode": "detail",
+      "exec": "trig.js",
+      "keywords": ["trig", "t"],
+      "takes_query": true
+    },
+    {
+      "name": "integrate",
+      "title": "Integrate",
+      "description": "Numerical integration (Simpson's rule)",
+      "mode": "detail",
+      "exec": "integrate.js",
+      "keywords": ["integrate", "int", "i"],
+      "takes_query": true
+    },
+    {
+      "name": "derive",
+      "title": "Derivative",
+      "description": "Symbolic differentiation",
+      "mode": "detail",
+      "exec": "derive.js",
+      "keywords": ["derive", "derivative", "der", "d"],
+      "takes_query": true
+    },
+    {
+      "name": "plot",
+      "title": "Plot",
+      "description": "ASCII graph of a function",
+      "mode": "detail",
+      "exec": "plot.js",
+      "keywords": ["plot", "graph", "p"],
+      "takes_query": true
+    },
+    {
+      "name": "constants",
+      "title": "Constants & Formulas",
+      "description": "Reference of mathematical constants",
+      "mode": "list",
+      "exec": "constants.js",
+      "keywords": ["const", "constants", "ref", "c"]
+    }
+  ]
+}
