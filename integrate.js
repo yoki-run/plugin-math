@@ -8,7 +8,7 @@
  */
 "use strict";
 
-const { readInput, writeResponse, detail, error, stripKeyword, evaluate, fmt } = require("./lib");
+const { readInput, writeResponse, detail, error, stripKeyword, evaluate, fmt, escHtml } = require("./lib");
 
 async function main() {
   const input = await readInput();
@@ -89,10 +89,6 @@ function simpson(f, a, b, n) {
   }
 
   return (h / 3) * sum;
-}
-
-function escHtml(s) {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 main();

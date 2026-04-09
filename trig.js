@@ -8,7 +8,7 @@
  */
 "use strict";
 
-const { readInput, writeResponse, detail, error, stripKeyword, evaluate, fmt } = require("./lib");
+const { readInput, writeResponse, detail, error, stripKeyword, evaluate, fmt, escHtml } = require("./lib");
 
 const TRIG_FNS = [
   { name: "sin",  fn: Math.sin,  inv: "asin" },
@@ -114,10 +114,6 @@ function showTable(angleExpr) {
   } catch (err) {
     writeResponse(error("Trig table error", err.message));
   }
-}
-
-function escHtml(s) {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 main();

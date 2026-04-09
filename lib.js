@@ -1,65 +1,17 @@
 /**
  * Shared helpers for the Yoki Extended Math plugin.
  *
- * Plugin SDK v2 protocol (Node.js):
- * - Read JSON from stdin
- * - Write JSON V2Response to stdout
+ * SDK I/O and response builders are imported from @yoki/plugin-sdk.
+ * This file contains math-specific code: evaluator, tokenizer, formatter.
  */
 
 "use strict";
 
-// ---------- I/O ----------
+const sdk = require("@yoki/plugin-sdk");
 
-function readInput() {
-  return new Promise((resolve) => {
-    let data = "";
-    process.stdin.setEncoding("utf8");
-    process.stdin.on("data", (chunk) => (data += chunk));
-    process.stdin.on("end", () => {
-      try {
-        resolve(data.trim() ? JSON.parse(data) : {});
-      } catch {
-        resolve({});
-      }
-    });
-  });
-}
-
-function writeResponse(resp) {
-  process.stdout.write(JSON.stringify(resp) + "\n");
-}
-
-// ---------- Response builders ----------
-
-function detail(markdown, metadata, actions) {
-  const out = { type: "detail", markdown };
-  if (metadata) out.metadata = metadata;
-  if (actions) out.actions = actions;
-  return out;
-}
-
-function listResponse(items) {
-  return { type: "list", items };
-}
-
-function error(msg, details) {
-  const out = { type: "error", error: msg };
-  if (details) out.details = details;
-  return out;
-}
-
-// ---------- Query parsing ----------
-
-function stripKeyword(query, ...keywords) {
-  const q = (query || "").trim();
-  const low = q.toLowerCase();
-  for (const kw of keywords) {
-    const kwLow = kw.toLowerCase();
-    if (low === kwLow) return "";
-    if (low.startsWith(kwLow + " ")) return q.slice(kw.length + 1).trim();
-  }
-  return q;
-}
+// Re-export SDK functions used by command scripts
+const { readInput, writeResponse, detail, error, stripKeyword, escHtml } = sdk;
+const listResponse = sdk.list;
 
 // ---------- Safe math evaluator ----------
 
@@ -332,6 +284,6 @@ function fmt(n) {
 
 module.exports = {
   readInput, writeResponse, detail, listResponse, error,
-  stripKeyword, evaluate, fmt, CONSTANTS, FUNCTIONS,
+  stripKeyword, escHtml, evaluate, fmt, CONSTANTS, FUNCTIONS,
   factorial, tokenize,
 };

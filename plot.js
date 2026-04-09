@@ -8,7 +8,7 @@
  */
 "use strict";
 
-const { readInput, writeResponse, detail, error, stripKeyword, evaluate, fmt } = require("./lib");
+const { readInput, writeResponse, detail, error, stripKeyword, evaluate, fmt, escHtml } = require("./lib");
 
 const WIDTH = 60;
 const HEIGHT = 20;
@@ -146,10 +146,6 @@ async function main() {
   } catch (err) {
     writeResponse(error("Plot error", err.message));
   }
-}
-
-function escHtml(s) {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 main();

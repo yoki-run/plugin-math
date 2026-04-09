@@ -9,7 +9,7 @@
  */
 "use strict";
 
-const { readInput, writeResponse, detail, error, evaluate, fmt } = require("./lib");
+const { readInput, writeResponse, detail, error, evaluate, fmt, escHtml } = require("./lib");
 
 async function main() {
   const input = await readInput();
@@ -79,10 +79,6 @@ function isPrime(n) {
     if (n % i === 0 || n % (i + 2) === 0) return false;
   }
   return true;
-}
-
-function escHtml(s) {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 main();

@@ -12,7 +12,7 @@
  */
 "use strict";
 
-const { readInput, writeResponse, detail, error, stripKeyword, evaluate, fmt } = require("./lib");
+const { readInput, writeResponse, detail, error, stripKeyword, evaluate, fmt, escHtml } = require("./lib");
 
 // ---------- AST nodes ----------
 
@@ -375,10 +375,6 @@ function evaluateAST(node, vars) {
     if (node.op === "^") return Math.pow(l, r);
   }
   return 0;
-}
-
-function escHtml(s) {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 main();
