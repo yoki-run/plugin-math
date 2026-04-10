@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/xssmusashi/yoki/main/plugin.schema.json",
   "name": "Extended Math",
   "keyword": "math",
-  "icon": "calculator",
+  "icon": "<svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><rect width='24' height='24' rx='6' fill='#7C4DFF'/><text x='12' y='17' text-anchor='middle' font-family='serif' font-size='16' font-weight='bold' fill='white'>Σ</text></svg>",
   "description": "Advanced calculator — trig, integrals, derivatives, plots, constants",
   "version": "1.1.0",
   "author": "Yoki",
