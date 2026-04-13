@@ -91,4 +91,4 @@ function simpson(f, a, b, n) {
   return (h / 3) * sum;
 }
 
-main();
+main().catch(e => { try { writeResponse(error("Error", e.message)); } catch(_) {} process.exit(1); });

@@ -90,4 +90,4 @@ async function main() {
   writeResponse(listResponse(items));
 }
 
-main();
+main().catch(e => { try { writeResponse(listResponse([])); } catch(_) {} process.exit(1); });

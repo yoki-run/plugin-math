@@ -19,6 +19,63 @@ const TRIG_FNS = [
   { name: "cot",  fn: (x) => 1 / Math.tan(x), inv: null },
 ];
 
+/**
+ * Parenthesis-aware function wrapper.
+ * Finds each call matching `pattern` (a regex like /\b(sin|cos|...)\s*\(/gi),
+ * locates the balanced closing `)`, extracts the full inner argument, and
+ * delegates to `wrapper(fnName, innerArg)` for the replacement string.
+ * Processes matches from end-to-start so splice indices stay valid.
+ */
+function wrapFunctions(expr, pattern, wrapper) {
+  const matches = [];
+  let m;
+  pattern.lastIndex = 0;
+  while ((m = pattern.exec(expr)) !== null) {
+    matches.push({ index: m.index, fn: m[1], afterParen: m.index + m[0].length });
+  }
+
+  // Work backwards to avoid index shifting
+  for (let i = matches.length - 1; i >= 0; i--) {
+    const { index, fn, afterParen } = matches[i];
+    // Walk forward from the char after '(' counting balanced parens
+    let depth = 1, j = afterParen;
+    while (j < expr.length && depth > 0) {
+      if (expr[j] === '(') depth++;
+      if (expr[j] === ')') depth--;
+      j++;
+    }
+    if (depth !== 0) continue; // unmatched parens — skip
+
+    const innerArg = expr.slice(afterParen, j - 1);
+    const replacement = wrapper(fn, innerArg);
+    expr = expr.slice(0, index) + replacement + expr.slice(j);
+  }
+
+  return expr;
+}
+
+/**
+ * Convert a trig expression from degree mode to radian mode.
+ * Handles nested calls like sin(cos(45)) by scanning balanced parens
+ * instead of the old [^)]+ regex that broke on nested expressions.
+ */
+function wrapTrigDegrees(expr) {
+  const ATRIG = /\b(asin|acos|atan)\s*\(/gi;
+  const TRIG  = /\b(sin|cos|tan|csc|sec|cot)\s*\(/gi;
+
+  // First pass: wrap inverse trig results (rad -> deg)
+  expr = wrapFunctions(expr, ATRIG, (fn, innerArg) => {
+    return `(${fn}(${innerArg})*180/${Math.PI})`;
+  });
+
+  // Second pass: wrap direct trig args (deg -> rad)
+  expr = wrapFunctions(expr, TRIG, (fn, innerArg) => {
+    return `${fn}((${innerArg})*${Math.PI}/180)`;
+  });
+
+  return expr;
+}
+
 async function main() {
   const input = await readInput();
   let query = stripKeyword(input.query || "", "trig", "t");
@@ -57,7 +114,13 @@ async function main() {
   }
 
   try {
-    const result = evaluate(query);
+    // When in degrees mode (default), wrap trig function arguments with
+    // degree-to-radian conversion so sin(45) means sin(45°), not sin(45 rad).
+    let evalExpr = query;
+    if (!isRad) {
+      evalExpr = wrapTrigDegrees(query);
+    }
+    const result = evaluate(evalExpr);
     const modeLabel = isRad ? "radians" : "degrees";
 
     // If the expression is a single trig function, show extra context
@@ -70,8 +133,15 @@ async function main() {
 
     // For inverse functions, also show the angle in degrees
     if (fnMatch && fnMatch[1].startsWith("a")) {
-      metadata.push({ label: "Result (deg)", value: fmt(result * 180 / Math.PI) + "°" });
-      metadata.push({ label: "Result (rad)", value: fmt(result) + " rad" });
+      if (isRad) {
+        // Result is in radians — show degree conversion
+        metadata.push({ label: "Result (deg)", value: fmt(result * 180 / Math.PI) + "°" });
+        metadata.push({ label: "Result (rad)", value: fmt(result) + " rad" });
+      } else {
+        // Result already in degrees (converted by degExpr) — show as-is
+        metadata.push({ label: "Result (deg)", value: fmt(result) + "°" });
+        metadata.push({ label: "Result (rad)", value: fmt(result * Math.PI / 180) + " rad" });
+      }
     }
 
     const md = `<div style="font-family:monospace;padding:16px">
@@ -116,4 +186,9 @@ function showTable(angleExpr) {
   }
 }
 
-main();
+// When required as a module, export helpers for testing
+if (require.main === module) {
+  main().catch(e => { try { writeResponse(error("Error", e.message)); } catch(_) {} process.exit(1); });
+}
+
+module.exports = { wrapFunctions, wrapTrigDegrees, TRIG_FNS };

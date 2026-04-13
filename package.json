@@ -2,6 +2,9 @@
   "name": "yoki-plugin-math",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@yoki/plugin-sdk": "^1.0.0"
   }

@@ -377,4 +377,9 @@ function evaluateAST(node, vars) {
   return 0;
 }
 
-main();
+// When required as a module, export helpers for testing
+if (require.main === module) {
+  main().catch(e => { try { writeResponse(error("Error", e.message)); } catch(_) {} process.exit(1); });
+}
+
+module.exports = { parse, diff, simplify, toString, evaluateAST, Num, Var, BinOp, FnCall };
